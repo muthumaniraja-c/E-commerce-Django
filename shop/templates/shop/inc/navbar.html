@@ -1,0 +1,908 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark shadow-lg py-3">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+      <i class="fa fa-shopping-bag"></i> ShopKart
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto align-items-center">
+
+        
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">
+            <i class="fa fa-house"></i> Home
+          </a>
+        </li>
+
+        
+        <li class="nav-item dropdown dropdown-hover">
+          <a class="nav-link dropdown-toggle" href="#" id="catDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+            <i class="fa fa-layer-group"></i> Categories
+          </a>
+          <ul class="dropdown-menu dropdown-menu-animated" aria-labelledby="catDropdown">
+            {% for cat in categories %}
+              <li><a class="dropdown-item" href="{% url 'collectionsview' cat.name %}">
+                <i class="fa fa-bookmark me-2"></i>{{ cat.name }}
+              </a></li>
+            {% empty %}
+              <li><a class="dropdown-item disabled" href="#" tabindex="-1">No categories available</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+
+        
+        <li class="nav-item mx-2">
+          <form class="d-flex" action="{% url 'search' %}" method="GET" id="searchForm">
+            <input class="form-control form-control-sm me-2 search-input" type="search" name="query" placeholder="Search Products" aria-label="Search" required minlength="1">
+            <button class="btn btn-sm search-btn" type="submit" id="searchBtn">
+              <i class="fa fa-magnifying-glass"></i>
+            </button>
+          </form>
+        </li>
+
+       
+        <li class="nav-item">
+          <a class="nav-link position-relative cart-link" href="{% url 'cart' %}" aria-label="Shopping Cart">
+            <i class="fa fa-bag-shopping"></i> Cart
+            <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {% if cart_count > 0 %}badge-animated{% endif %}" {% if cart_count == 0 %}style="display: none;"{% endif %}>
+              {{ cart_count|default:0 }}
+            </span>
+          </a>
+        </li>
+
+        
+        <li class="nav-item">
+          <a class="nav-link position-relative fav-link" href="{% url 'favviewpage' %}" aria-label="Favorites">
+            <i class="fa fa-heart"></i> Favorites
+            <span id="fav-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {% if fav_count > 0 %}badge-animated{% endif %}" {% if fav_count == 0 %}style="display: none;"{% endif %}>
+              {{ fav_count|default:0 }}
+            </span>
+          </a>
+        </li>
+
+        
+        <li class="nav-item dropdown dropdown-hover">
+          {% if request.user.is_authenticated %}
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+              <i class="fa fa-circle-user"></i> {{ request.user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="{% url 'my_orders' %}">
+                <i class="fa fa-cube me-2"></i> My Orders
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">
+                <i class="fa fa-right-from-bracket me-2"></i> Logout
+              </a></li>
+            </ul>
+          {% else %}
+            <a class="nav-link dropdown-toggle" href="#" id="guestDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+              <i class="fa fa-circle-user"></i> Account
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated" aria-labelledby="guestDropdown">
+              <li><a class="dropdown-item" href="{% url 'login' %}">
+                <i class="fa fa-right-to-bracket me-2"></i> Login
+              </a></li>
+              <li><a class="dropdown-item" href="{% url 'register' %}">
+                <i class="fa fa-user-plus me-2"></i> Register
+              </a></li>
+            </ul>
+          {% endif %}
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+:root {
+    --navbar-bg: linear-gradient(135deg, #000000 0%, #434343 100%);
+    --accent-color: #ffcc00;
+    --accent-hover: #ff9500;
+    --hover-bg: rgba(255, 204, 0, 0.15);
+    --hover-bg-light: rgba(255, 204, 0, 0.1);
+    --dropdown-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    --transition-speed: 0.3s;
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-pill: 20px;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+.navbar {
+    background: var(--navbar-bg);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-speed) ease;
+    border-bottom: 1px solid rgba(255, 204, 0, 0.1);
+}
+
+.navbar-nav .nav-link {
+    padding: 10px 16px;
+    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--border-radius);
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+}
+
+.navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--hover-bg-light);
+    transform: translateX(-100%);
+    transition: transform var(--transition-speed) ease;
+    z-index: -1;
+}
+
+.navbar-nav .nav-link:hover::before {
+    transform: translateX(0);
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: var(--hover-bg);
+    transform: translateY(-2px);
+    color: var(--accent-color);
+}
+
+.navbar-nav .nav-link i {
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover i {
+    color: var(--accent-color);
+}
+
+
+.dropdown-menu {
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    border: 1px solid rgba(255, 204, 0, 0.1);
+    box-shadow: var(--dropdown-shadow);
+    border-radius: var(--border-radius-lg);
+    padding: 8px;
+    margin-top: 8px;
+    min-width: 220px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+    display: none;
+    z-index: 1050;
+}
+
+.dropdown-menu.show,
+.dropdown-hover:hover > .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #b0b0b0;
+}
+
+.dropdown-item i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+    color: var(--accent-color);
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    color: #000 !important;
+    transform: translateX(5px);
+}
+
+.dropdown-item:hover i {
+    transform: scale(1.2);
+    color: #000;
+}
+
+.dropdown-item:active {
+    background: linear-gradient(135deg, #ff9500 0%, #ffcc00 100%);
+}
+
+.dropdown-divider {
+    margin: 8px 0;
+    border-color: rgba(255, 204, 0, 0.1);
+    opacity: 1;
+}
+
+
+.dropdown-toggle::after {
+    transition: transform var(--transition-speed) ease;
+    border-top-color: var(--accent-color);
+}
+
+.dropdown-hover:hover .dropdown-toggle::after,
+.dropdown.show .dropdown-toggle::after {
+    transform: rotate(180deg);
+}
+
+
+.search-input {
+    border-radius: var(--border-radius-pill);
+    border: 2px solid rgba(255, 204, 0, 0.3);
+    padding: 6px 15px;
+    transition: all var(--transition-speed) ease;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    width: 200px;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.search-input:focus {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--accent-color);
+    color: #333;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+    transform: scale(1.05);
+    outline: none;
+}
+
+.search-input:focus::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.search-input.is-invalid {
+    border-color: #dc3545;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.search-btn {
+    border-radius: var(--border-radius-pill);
+    padding: 6px 15px;
+    transition: all var(--transition-speed) ease;
+    border: none;
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    color: #000;
+    font-weight: 600;
+}
+
+.search-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+    background: linear-gradient(135deg, #ff9500 0%, #ffcc00 100%);
+}
+
+.search-btn:active {
+    transform: scale(0.95);
+}
+
+.search-btn i {
+    transition: transform 0.3s ease;
+}
+
+.search-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+.cart-link:hover i,
+.fav-link:hover i {
+    animation: bounce 0.6s ease;
+    color: var(--accent-color);
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+
+.cart-link:hover i {
+    animation: shake-cart 0.5s ease;
+}
+
+@keyframes shake-cart {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+
+.fav-link:hover i {
+    animation: heartbeat 0.6s ease;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.15); }
+}
+
+.badge-animated {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+.badge {
+    font-size: 0.65rem;
+    padding: 4px 7px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%) !important;
+}
+
+
+.navbar-brand {
+    font-size: 1.5rem;
+    transition: all var(--transition-speed) ease;
+    color: #fff;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    color: var(--accent-color);
+    text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+}
+
+.navbar-brand i {
+    margin-right: 8px;
+    transition: transform 0.5s ease;
+    color: var(--accent-color);
+}
+
+.navbar-brand:hover i {
+    transform: rotate(360deg) scale(1.1);
+}
+
+
+.fa-house {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .fa-house {
+    animation: house-bounce 0.6s ease;
+}
+
+@keyframes house-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.fa-layer-group {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .fa-layer-group {
+    animation: layer-float 0.6s ease;
+}
+
+@keyframes layer-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.fa-circle-user {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .fa-circle-user {
+    animation: user-spin 0.5s ease;
+}
+
+@keyframes user-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.nav-link:focus,
+.dropdown-item:focus,
+.search-input:focus,
+.search-btn:focus {
+    outline: 2px solid rgba(255, 204, 0, 0.5);
+    outline-offset: 2px;
+}
+
+.nav-link:focus-visible,
+.dropdown-item:focus-visible,
+.search-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+
+.loading .search-btn {
+    pointer-events: none;
+}
+
+.loading .search-btn i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        padding: 15px;
+        border-radius: var(--border-radius);
+        margin-top: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 204, 0, 0.1);
+    }
+
+    .navbar-nav .nav-item {
+        margin: 5px 0;
+    }
+    
+    .navbar-nav form {
+        margin: 10px 0;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+    
+    .dropdown-menu {
+        box-shadow: none;
+        border: 1px solid rgba(255, 204, 0, 0.1);
+        margin-top: 5px;
+        background: rgba(20, 20, 20, 0.98);
+    }
+    
+    .dropdown-hover:hover > .dropdown-menu {
+        animation: none;
+    }
+
+    .badge {
+        position: relative !important;
+        transform: none !important;
+        margin-left: 5px;
+        top: -2px !important;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .navbar-toggler {
+        border-color: rgba(255, 204, 0, 0.3);
+    }
+
+    .navbar-toggler:focus {
+        box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+
+    .search-input {
+        font-size: 14px;
+    }
+}
+
+
+.no-animate {
+    animation: none !important;
+    transition: none !important;
+}
+
+#authSnackbar {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 204, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+#authSnackbar.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+#authSnackbar i {
+  color: #ffcc00;
+  font-size: 18px;
+}
+
+.snackbar-btn {
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  color: #000 !important;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  margin-left: 15px;
+  transition: all 0.3s ease;
+}
+
+.snackbar-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  #authSnackbar {
+    left: 15px;
+    right: 15px;
+    transform: translateX(0) translateY(100px);
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #authSnackbar.show {
+    transform: translateX(0) translateY(0);
+  }
+
+  .snackbar-btn {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    initDropdowns();
+    initMobileMenu();
+    initSearchForm();
+    initKeyboardNavigation();
+});
+
+
+function initDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown-hover');
+    
+    dropdowns.forEach(dropdown => {
+        const menu = dropdown.querySelector('.dropdown-menu');
+        if (!menu) return;
+        
+        let timeout;
+        
+     
+        if (window.innerWidth > 991) {
+            dropdown.addEventListener('mouseenter', function() {
+                clearTimeout(timeout);
+                menu.classList.add('show');
+            });
+            
+            dropdown.addEventListener('mouseleave', function() {
+                timeout = setTimeout(() => {
+                    menu.classList.remove('show');
+                }, 200);
+            });
+        }
+    });
+}
+
+
+function initMobileMenu() {
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
+    const navbar = document.getElementById('mainNavbar');
+    
+   
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 991 && navbar) {
+                const bsCollapse = bootstrap.Collapse.getInstance(navbar);
+                if (bsCollapse) {
+                    bsCollapse.hide();
+                }
+            }
+        });
+    });
+
+    
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 991) {
+            const navbar = document.getElementById('mainNavbar');
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            
+            if (navbar && navbarToggler && !navbar.contains(e.target) && !navbarToggler.contains(e.target)) {
+                const bsCollapse = bootstrap.Collapse.getInstance(navbar);
+                if (bsCollapse && navbar.classList.contains('show')) {
+                    bsCollapse.hide();
+                }
+            }
+        }
+    });
+}
+
+
+function initSearchForm() {
+    const searchForm = document.getElementById('searchForm');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = searchForm?.querySelector('input[name="query"]');
+    
+    if (!searchForm || !searchBtn || !searchInput) return;
+    
+    searchForm.addEventListener('submit', function(e) {
+        const query = searchInput.value.trim();
+        
+
+        if (query.length === 0) {
+            e.preventDefault();
+            searchInput.focus();
+            searchInput.classList.add('is-invalid');
+            
+            setTimeout(() => {
+                searchInput.classList.remove('is-invalid');
+            }, 2000);
+            
+            return false;
+        }
+        
+    
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+        searchForm.classList.add('loading');
+    });
+    
+    
+    searchInput.addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
+}
+
+
+
+ 
+function initKeyboardNavigation() {
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('keydown', function(e) {
+            const dropdown = this.closest('.dropdown');
+            const menu = dropdown?.querySelector('.dropdown-menu');
+            
+            if (!menu) return;
+
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                menu.classList.toggle('show');
+            }
+            
+        
+            if (e.key === 'Escape') {
+                menu.classList.remove('show');
+            }
+           
+            if (e.key === 'ArrowDown' && menu.classList.contains('show')) {
+                e.preventDefault();
+                const firstItem = menu.querySelector('.dropdown-item');
+                if (firstItem) firstItem.focus();
+            }
+        });
+    });
+   
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach((item, index, items) => {
+        item.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextItem = items[index + 1];
+                if (nextItem) nextItem.focus();
+            }
+            
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevItem = items[index - 1];
+                if (prevItem) {
+                    prevItem.focus();
+                } else {
+                    // Focus back to toggle
+                    const dropdown = this.closest('.dropdown');
+                    const toggle = dropdown?.querySelector('.dropdown-toggle');
+                    if (toggle) toggle.focus();
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                const dropdown = this.closest('.dropdown');
+                const toggle = dropdown?.querySelector('.dropdown-toggle');
+                const menu = dropdown?.querySelector('.dropdown-menu');
+                
+                if (menu) menu.classList.remove('show');
+                if (toggle) toggle.focus();
+            }
+        });
+    });
+}
+
+
+function updateCartBadge(count) {
+    const badge = document.getElementById('cart-badge');
+    if (!badge) {
+        console.warn('Cart badge element not found');
+        return;
+    }
+    
+    const numCount = parseInt(count) || 0;
+    
+    if (numCount > 0) {
+        badge.textContent = numCount;
+        badge.style.display = 'inline-block';
+        
+        // Trigger animation
+        badge.classList.remove('badge-animated');
+        void badge.offsetWidth; // Trigger reflow
+        badge.classList.add('badge-animated');
+    } else {
+        badge.style.display = 'none';
+        badge.classList.remove('badge-animated');
+    }
+}
+
+
+function updateFavBadge(count) {
+    const badge = document.getElementById('fav-badge');
+    if (!badge) {
+        console.warn('Favorites badge element not found');
+        return;
+    }
+    
+    const numCount = parseInt(count) || 0;
+    
+    if (numCount > 0) {
+        badge.textContent = numCount;
+        badge.style.display = 'inline-block';
+        
+        
+        badge.classList.remove('badge-animated');
+        void badge.offsetWidth; 
+        badge.classList.add('badge-animated');
+    } else {
+        badge.style.display = 'none';
+        badge.classList.remove('badge-animated');
+    }
+}
+
+
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        
+        const dropdowns = document.querySelectorAll('.dropdown-menu');
+        dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
+        
+        initDropdowns();
+    }, 250);
+});
+
+
+window.updateCartBadge = updateCartBadge;
+window.updateFavBadge = updateFavBadge;
+
+document.addEventListener("DOMContentLoaded", function() {
+  const isAuthenticated = {% if request.user.is_authenticated %}true{% else %}false{% endif %};
+  
+  const cartLink = document.querySelector('a[href="{% url "cart" %}"]');
+  const favLink = document.querySelector('a[href="{% url "favviewpage" %}"]');
+
+  
+  function showSnackbar(message) {
+    
+    const existing = document.getElementById('authSnackbar');
+    if (existing) existing.remove();
+
+    
+    const snackbar = document.createElement('div');
+    snackbar.id = 'authSnackbar';
+    snackbar.innerHTML = `
+      <i class="fas fa-exclamation-circle me-2"></i>
+      ${message}
+      <a href="/login/" class="snackbar-btn">Login</a>
+    `;
+    document.body.appendChild(snackbar);
+
+   
+    setTimeout(() => snackbar.classList.add('show'), 100);
+
+    setTimeout(() => {
+      snackbar.classList.remove('show');
+      setTimeout(() => snackbar.remove(), 300);
+    }, 4000);
+  }
+
+
+  if (cartLink) {
+    cartLink.addEventListener("click", function(e) {
+      if (!isAuthenticated) {
+        e.preventDefault();
+        showSnackbar('Please login first to view cart!');
+      }
+    });
+  }
+
+
+  if (favLink) {
+    favLink.addEventListener("click", function(e) {
+      if (!isAuthenticated) {
+        e.preventDefault();
+        showSnackbar('Please login first to view favorites!');
+      }
+    });
+  }
+});
+
+</script>

@@ -1,0 +1,542 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+ShopKart | Online Shopping
+{% endblock title %}
+
+{% block content %}
+<style>
+/* ========== MATCHING THEME STYLES ========== */
+
+.home-wrapper {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+/* Section Header */
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-header h4 {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-header h4 i {
+  color: #ffcc00;
+}
+
+.section-header p {
+  color: #b0b0b0;
+  font-size: 16px;
+  margin: 0;
+}
+
+.section-header .header-line {
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  margin: 18px auto 0;
+  border-radius: 2px;
+}
+
+/* View All / View Less Button */
+.view-all {
+  text-align: center;
+  margin-top: 35px;
+}
+
+.btn-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 30px;
+  background: transparent;
+  border: 2px solid #ffcc00;
+  border-radius: 25px;
+  color: #ffcc00;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-toggle:hover {
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  color: #000;
+  box-shadow: 0 5px 20px rgba(255, 204, 0, 0.3);
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+/* Product Card */
+.product-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.product-card.hidden {
+  display: none;
+}
+
+.product-card.showing {
+  display: block;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.product-card.hiding {
+  animation: fadeOutDown 0.3s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 204, 0, 0.3);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Product Image */
+.product-img {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+}
+
+.product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-img img {
+  transform: scale(1.05);
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  color: #000;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+/* Image Overlay with View Button */
+.img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .img-overlay {
+  opacity: 1;
+}
+
+.btn-view {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 20px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .btn-view {
+  transform: translateY(0);
+}
+
+.btn-view:hover {
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+  color: #000;
+}
+
+/* Product Info */
+.product-info {
+  padding: 15px;
+}
+
+.product-info a {
+  text-decoration: none;
+}
+
+.product-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.product-card:hover .product-name {
+  color: #ffcc00;
+}
+
+/* Price */
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-new {
+  color: #ffcc00;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.price-old {
+  color: #666;
+  font-size: 12px;
+  text-decoration: line-through;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1199px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+
+  .product-img {
+    height: 150px;
+    padding: 12px;
+  }
+
+  .product-info {
+    padding: 12px;
+  }
+
+  .product-name {
+    font-size: 13px;
+  }
+
+  .price-new {
+    font-size: 14px;
+  }
+
+  .price-old {
+    font-size: 11px;
+  }
+
+  .section-header h4 {
+    font-size: 28px;
+  }
+
+  .section-header p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 991px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .section-header h4 {
+    font-size: 24px;
+  }
+
+  .product-img {
+    height: 120px;
+    padding: 10px;
+  }
+
+  .product-info {
+    padding: 10px;
+  }
+
+  .product-name {
+    font-size: 12px;
+  }
+
+  .price-new {
+    font-size: 13px;
+  }
+
+  .price-old {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 767px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .home-wrapper {
+    padding: 20px 15px;
+  }
+
+  .product-img {
+    height: 130px;
+    padding: 8px;
+  }
+
+  .product-info {
+    padding: 8px;
+  }
+
+  .product-name {
+    font-size: 11px;
+  }
+
+  .price-new {
+    font-size: 12px;
+  }
+
+  .price-old {
+    font-size: 9px;
+  }
+
+  .section-header h4 {
+    font-size: 20px;
+  }
+
+  .btn-toggle {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+
+  .img-overlay {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .product-img {
+    height: 120px;
+  }
+
+  .section-header h4 {
+    font-size: 18px;
+  }
+
+  .section-header p {
+    font-size: 12px;
+  }
+
+  .product-name {
+    font-size: 10px;
+  }
+
+  .price-new {
+    font-size: 11px;
+  }
+
+  .price-old {
+    font-size: 8px;
+  }
+
+  .product-info {
+    padding: 6px;
+  }
+
+  .badge {
+    font-size: 7px;
+    padding: 2px 5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-img {
+    height: 100px;
+  }
+
+  .home-wrapper {
+    padding: 15px 10px;
+  }
+
+  .products-grid {
+    gap: 6px;
+  }
+
+  .product-card {
+    border-radius: 8px;
+  }
+}
+</style>
+
+{% include 'shop/inc/slider.html' %}
+
+<div class="home-wrapper">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h4><i class="fas fa-bolt"></i> Latest Offers</h4>
+      <p>Curated deals just for you</p>
+      <div class="header-line"></div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="productsGrid">
+      {% for item in products %}
+        <div class="product-card {% if forloop.counter > 10 %}hidden{% endif %}" data-index="{{ forloop.counter }}" style="animation-delay: {{ forloop.counter0 }}00ms;">
+          <!-- Image -->
+          <div class="product-img">
+            <span class="badge">Sale</span>
+            <a href="{% url 'product_details' item.category.name item.name %}">
+              <img src="{{ item.product_image.url }}" alt="{{ item.name }}">
+            </a>
+            <!-- View Button on Hover -->
+            <div class="img-overlay">
+              <a href="{% url 'product_details' item.category.name item.name %}" class="btn-view">
+                <i class="fas fa-eye"></i> View
+              </a>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="product-info">
+            <a href="{% url 'product_details' item.category.name item.name %}">
+              <p class="product-name">{{ item.name }}</p>
+            </a>
+            <div class="product-price">
+              <span class="price-new">₹{{ item.selling_price | stringformat:'d' }}</span>
+              <span class="price-old">₹{{ item.original_price | stringformat:'d' }}</span>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div style="grid-column:1/-1;text-align:center;padding:40px;">
+          <p style="color:#888;font-size:13px;">No products available</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- View All / View Less Button -->
+    {% if products|length > 10 %}
+    <div class="view-all">
+      <button class="btn-toggle" id="toggleBtn" onclick="toggleProducts()">
+        <span id="btnText">View All Products</span>
+        <i class="fas fa-arrow-right" id="btnIcon"></i>
+      </button>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  const INITIAL_COUNT = 10;
+  const allProducts = document.querySelectorAll('.product-card');
+  const totalProducts = allProducts.length;
+  let isExpanded = false;
+
+  function toggleProducts() {
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    
+    if (!isExpanded) {
+      // Show all products
+      allProducts.forEach((card, index) => {
+        if (index >= INITIAL_COUNT) {
+          card.classList.remove('hidden');
+          card.classList.add('showing');
+          card.style.animationDelay = `${(index - INITIAL_COUNT) * 50}ms`;
+        }
+      });
+      
+      btnText.textContent = 'View Less';
+      btnIcon.className = 'fas fa-arrow-up';
+      isExpanded = true;
+      
+    } else {
+      // Hide extra products
+      allProducts.forEach((card, index) => {
+        if (index >= INITIAL_COUNT) {
+          card.classList.add('hiding');
+        }
+      });
+      
+      // After animation, add hidden class
+      setTimeout(() => {
+        allProducts.forEach((card, index) => {
+          if (index >= INITIAL_COUNT) {
+            card.classList.remove('showing', 'hiding');
+            card.classList.add('hidden');
+          }
+        });
+      }, 300);
+      
+      btnText.textContent = 'View All Products';
+      btnIcon.className = 'fas fa-arrow-right';
+      isExpanded = false;
+      
+      // Scroll to top of products
+      document.querySelector('.products-grid').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+</script>
+
+{% endblock content %}

@@ -1,0 +1,330 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}Search Results | ShopKart{% endblock %}
+
+{% block content %}
+<style>
+/* ========== SEARCH RESULTS STYLES ========== */
+.search-section {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 30px 0;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 25px;
+}
+
+.section-header h4 {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header h4 i {
+  color: #ffcc00;
+}
+
+.section-header .search-query {
+  color: #ffcc00;
+}
+
+.section-header hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.results-count {
+  color: #b0b0b0;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+/* Product Card */
+.product-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 204, 0, 0.3);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Product Image */
+.product-img {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-img img {
+  transform: scale(1.05);
+}
+
+/* Image Overlay */
+.img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .img-overlay {
+  opacity: 1;
+}
+
+/* View Button */
+.btn-view {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 20px;
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .btn-view {
+  transform: translateY(0);
+}
+
+.btn-view:hover {
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+  color: #000;
+}
+
+/* Product Info */
+.product-info {
+  padding: 12px;
+}
+
+.product-name {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.product-card:hover .product-name {
+  color: #ffcc00;
+}
+
+/* Price */
+.product-price {
+  color: #ffcc00;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  grid-column: 1 / -1;
+}
+
+.empty-state i {
+  font-size: 60px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.empty-state h5 {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.btn-shop {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-shop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 1199px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .search-section {
+    padding: 20px 0;
+  }
+
+  .product-img {
+    height: 130px;
+  }
+
+  .product-info {
+    padding: 10px;
+  }
+
+  .product-name {
+    font-size: 12px;
+  }
+
+  .product-price {
+    font-size: 14px;
+  }
+
+  .img-overlay {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-view {
+    transform: translateY(0);
+    padding: 8px 15px;
+    font-size: 11px;
+  }
+
+  .section-header h4 {
+    font-size: 18px;
+  }
+
+  .empty-state {
+    padding: 40px 20px;
+  }
+
+  .empty-state i {
+    font-size: 50px;
+  }
+}
+
+@media (max-width: 400px) {
+  .product-img {
+    height: 110px;
+  }
+}
+</style>
+
+<section class="search-section">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h4>
+        <i class="fas fa-search"></i> 
+        Search Results for "<span class="search-query">{{ query }}</span>"
+      </h4>
+      <hr>
+    </div>
+
+    <!-- Results Count -->
+    {% if results %}
+    <p class="results-count">
+      <i class="fas fa-check-circle me-1" style="color: #28a745;"></i>
+      Found {{ results|length }} product{% if results|length > 1 %}s{% endif %}
+    </p>
+    {% endif %}
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+      {% for product in results %}
+      <div class="product-card">
+        <!-- Image -->
+        <div class="product-img">
+          <img src="{{ product.product_image.url }}" alt="{{ product.name }}">
+          <!-- Overlay with View Button -->
+          <div class="img-overlay">
+            <a href="{% url 'product_details' product.category.name product.name %}" class="btn-view">
+              <i class="fas fa-eye"></i> View
+            </a>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="product-info">
+          <p class="product-name">{{ product.name }}</p>
+          <p class="product-price">₹{{ product.selling_price|stringformat:'d' }}</p>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <h5>No products found</h5>
+        <p>We couldn't find any products matching "{{ query }}"</p>
+        <a href="{% url 'home' %}" class="btn-shop">
+          <i class="fas fa-home"></i> Back to Home
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

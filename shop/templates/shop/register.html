@@ -1,0 +1,318 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+  Registration | ShopKart
+{% endblock title %}
+
+{% block content %}
+<style>
+  .register-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #000000 0%, #434343 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 15px;
+  }
+
+  .register-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px 30px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .register-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .register-header .brand-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 20px;
+  }
+
+  .register-header h2 {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 5px;
+  }
+
+  .register-header p {
+    color: #b0b0b0;
+    font-size: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+    position: relative;
+  }
+
+  .form-group label {
+    color: #b0b0b0;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .form-group .input-wrapper {
+    position: relative;
+  }
+
+  .form-group .input-wrapper i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    z-index: 10;
+  }
+
+  .form-group input,
+  .form-group .form-control {
+    width: 100%;
+    padding: 10px 15px 10px 38px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  .form-group input::placeholder,
+  .form-group .form-control::placeholder {
+    color: #666 !important;
+  }
+
+  .form-group input:focus,
+  .form-group .form-control:focus {
+    outline: none !important;
+    border-color: #ffcc00 !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.15) !important;
+  }
+
+  .form-group .input-wrapper:focus-within i {
+    color: #ffcc00;
+  }
+
+  .btn-register {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    border: none;
+    border-radius: 8px;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+  }
+
+  .btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 204, 0, 0.3);
+  }
+
+  .btn-register:active {
+    transform: translateY(-1px);
+  }
+
+  /* Alert Styling */
+  .alert-container .alert {
+    padding: 10px 15px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    margin-bottom: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .alert-container .alert .btn-close {
+    margin-left: auto;
+  }
+
+  .alert-container .alert-success {
+    background-color: #d4edda !important;
+    border: 1px solid #28a745 !important;
+    color: #155724 !important;
+  }
+
+  .alert-container .alert-danger {
+    background-color: #f8d7da !important;
+    border: 1px solid #dc3545 !important;
+    color: #721c24 !important;
+  }
+
+  .alert-container .alert-warning {
+    background-color: #fff3cd !important;
+    border: 1px solid #ffc107 !important;
+    color: #856404 !important;
+  }
+
+  .alert-container .alert-info {
+    background-color: #d1ecf1 !important;
+    border: 1px solid #17a2b8 !important;
+    color: #0c5460 !important;
+  }
+
+  /* Error Messages */
+  .error-box {
+    background: rgba(220, 53, 69, 0.15);
+    border: 1px solid rgba(220, 53, 69, 0.5);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+  }
+
+  .error-box .error-title {
+    color: #ff6b6b;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .error-box ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .error-box li {
+    color: #ff9999;
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+
+  /* Login Link */
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #b0b0b0;
+    font-size: 12px;
+  }
+
+  .login-link a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .login-link a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  /* Responsive */
+  @media (max-width: 576px) {
+    .register-card {
+      padding: 25px 20px;
+    }
+  }
+</style>
+
+<div class="register-wrapper">
+  <div class="register-card">
+    <!-- Header -->
+    <div class="register-header">
+      <div class="brand-icon">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <h2>Create Account</h2>
+      <p>Join ShopKart today</p>
+    </div>
+
+    <!-- Messages -->
+    <div class="alert-container">
+      {% include 'shop/inc/message.html' %}
+    </div>
+
+    <!-- Form Errors -->
+    {% if form.errors %}
+    <div class="error-box">
+      <div class="error-title">
+        <i class="fas fa-exclamation-circle"></i> Please fix the following:
+      </div>
+      {% if form.errors.username %}
+        <ul>{{ form.errors.username }}</ul>
+      {% endif %}
+      {% if form.errors.email %}
+        <ul>{{ form.errors.email }}</ul>
+      {% endif %}
+      {% if form.errors.password1 %}
+        <ul>{{ form.errors.password1 }}</ul>
+      {% endif %}
+      {% if form.errors.password2 %}
+        <ul>{{ form.errors.password2 }}</ul>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Register Form -->
+    <form method="post" action="">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label>User Name</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          {{ form.username }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>User Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope"></i>
+          {{ form.email }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          {{ form.password1 }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          {{ form.password2 }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn-register">Register</button>
+    </form>
+
+    <!-- Login Link -->
+    <div class="login-link">
+      Already have an account? <a href="{% url 'login' %}">Login Now</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}

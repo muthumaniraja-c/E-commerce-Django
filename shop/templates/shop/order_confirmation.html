@@ -1,0 +1,373 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}Order Confirmation | ShopKart{% endblock title %}
+
+{% block content %}
+<style>
+/* ========== ORDER CONFIRMATION STYLES ========== */
+.confirmation-section {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 40px 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Confirmation Card */
+.confirmation-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+}
+
+/* Success Icon */
+.success-icon {
+  width: 100px;
+  height: 100px;
+  background: rgba(40, 167, 69, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px;
+  animation: scaleIn 0.5s ease;
+}
+
+.success-icon i {
+  font-size: 50px;
+  color: #28a745;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Headings */
+.confirmation-title {
+  color: #28a745;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.confirmation-subtitle {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.order-number {
+  color: #ffcc00;
+  font-weight: 700;
+}
+
+.confirmation-email {
+  color: #b0b0b0;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.confirmation-email strong {
+  color: #fff;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 25px 0;
+}
+
+/* Info Boxes */
+.info-row {
+  display: flex;
+  gap: 20px;
+  text-align: left;
+}
+
+.info-box {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.info-box h6 {
+  color: #ffcc00;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-box h6 i {
+  font-size: 16px;
+}
+
+.info-box address {
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.8;
+  font-style: normal;
+  margin: 0;
+}
+
+.info-box p {
+  color: #fff;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.info-box strong {
+  color: #b0b0b0;
+}
+
+/* Status Badge */
+.status-badge {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Items Section */
+.items-section h6 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Items Table */
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.items-table thead {
+  background: rgba(255, 204, 0, 0.1);
+}
+
+.items-table th {
+  color: #ffcc00;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.items-table td {
+  color: #fff;
+  font-size: 13px;
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.items-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.items-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.btn-orders {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-orders:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+.btn-shop {
+  padding: 12px 25px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-shop:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .confirmation-section {
+    padding: 20px 0;
+  }
+
+  .confirmation-card {
+    padding: 25px 20px;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .success-icon i {
+    font-size: 40px;
+  }
+
+  .confirmation-title {
+    font-size: 22px;
+  }
+
+  .info-row {
+    flex-direction: column;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-orders,
+  .btn-shop {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .items-table th,
+  .items-table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+</style>
+
+<section class="confirmation-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="confirmation-card">
+          <!-- Success Icon -->
+          <div class="success-icon">
+            <i class="fas fa-check"></i>
+          </div>
+
+          <!-- Title -->
+          <h2 class="confirmation-title">Order Placed Successfully!</h2>
+          <p class="confirmation-subtitle">Thank you for your order.</p>
+          <p class="confirmation-subtitle">
+            Your order number is: <span class="order-number">#{{ order.order_number }}</span>
+          </p>
+          <p class="confirmation-email">
+            We've sent a confirmation email to <strong>{{ order.email }}</strong>
+          </p>
+
+          <hr class="divider">
+
+          <!-- Info Boxes -->
+          <div class="info-row">
+            <!-- Shipping Address -->
+            <div class="info-box">
+              <h6><i class="fas fa-map-marker-alt"></i> Shipping Address</h6>
+              <address>
+                {{ order.full_name }}<br>
+                {{ order.address }}<br>
+                {{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>
+                Phone: {{ order.phone }}
+              </address>
+            </div>
+
+            <!-- Order Details -->
+            <div class="info-box">
+              <h6><i class="fas fa-receipt"></i> Order Details</h6>
+              <p><strong>Total Amount:</strong> ₹{{ order.total_amount|stringformat:'d' }}</p>
+              <p><strong>Payment:</strong> {{ order.payment_mode }}</p>
+              <p><strong>Status:</strong> <span class="status-badge">{{ order.status }}</span></p>
+              <p><strong>Order Date:</strong> {{ order.created_at|date:"d M, Y" }}</p>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- Ordered Items -->
+          <div class="items-section">
+            <h6><i class="fas fa-box me-2" style="color: #ffcc00;"></i> Ordered Items</h6>
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in order_items %}
+                <tr>
+                  <td>{{ item.product.name }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>₹{{ item.price|stringformat:'d' }}</td>
+                  <td style="color: #ffcc00; font-weight: 600;">₹{{ item.total|stringformat:'d' }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <a href="{% url 'my_orders' %}" class="btn-orders">
+              <i class="fas fa-list"></i> View All Orders
+            </a>
+            <a href="{% url 'home' %}" class="btn-shop">
+              <i class="fas fa-shopping-bag"></i> Continue Shopping
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

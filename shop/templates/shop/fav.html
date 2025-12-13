@@ -1,0 +1,298 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+  Favorites | ShopKart
+{% endblock title %}
+
+{% block content %}
+<style>
+/* ========== FAVORITES PAGE STYLES ========== */
+.favorites-section {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 30px 0;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 25px;
+}
+
+.section-header h4 {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header h4 i {
+  color: #ff6b6b;
+}
+
+.section-header hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Favorites Table Card */
+.favorites-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Table Styles */
+.favorites-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.favorites-table thead {
+  background: rgba(255, 204, 0, 0.1);
+}
+
+.favorites-table th {
+  color: #ffcc00;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.favorites-table td {
+  padding: 15px 20px;
+  color: #fff;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+.favorites-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.favorites-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.favorites-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Product Image */
+.product-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Product Name */
+.product-name {
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.product-name:hover {
+  color: #ffcc00;
+}
+
+/* Price */
+.product-price {
+  color: #ffcc00;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Remove Button */
+.btn-remove {
+  padding: 8px 15px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+  background: #ff6b6b;
+  border-color: #ff6b6b;
+  color: #fff;
+}
+
+/* Empty State - COMPACT */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.empty-state i {
+  font-size: 50px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.empty-state h5 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.btn-shop {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-shop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .favorites-table {
+    display: block;
+  }
+
+  .favorites-table thead {
+    display: none;
+  }
+
+  .favorites-table tbody {
+    display: block;
+  }
+
+  .favorites-table tr {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    gap: 15px;
+  }
+
+  .favorites-table td {
+    padding: 0;
+    border: none;
+  }
+
+  .favorites-table td:nth-child(1) {
+    flex: 0 0 70px;
+  }
+
+  .favorites-table td:nth-child(2) {
+    flex: 1;
+  }
+
+  .favorites-table td:nth-child(3) {
+    flex: 0 0 100%;
+    order: 4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .favorites-table td:nth-child(4) {
+    flex: 0 0 auto;
+    order: 3;
+  }
+
+  .product-img {
+    width: 60px;
+    height: 60px;
+  }
+}
+</style>
+
+<section class="favorites-section">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h4><i class="fas fa-heart"></i> My Favorites</h4>
+      <hr>
+    </div>
+
+    <!-- Favorites Card -->
+    <div class="favorites-card">
+      {% if fav %}
+        <table class="favorites-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product Name</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in fav %}
+            <tr>
+              <td>
+                <img src="{{ item.product.product_image.url }}" alt="{{ item.product.name }}" class="product-img">
+              </td>
+              <td>
+                <a href="{% url 'product_details' item.product.category.name item.product.name %}" class="product-name">
+                  {{ item.product.name }}
+                </a>
+              </td>
+              <td>
+                <span class="product-price">₹{{ item.product.selling_price | stringformat:'d' }}</span>
+              </td>
+              <td>
+                <a href="{% url 'remove_fav' item.id %}" onclick="return confirm('Are you sure you want to remove this item?')" class="btn-remove">
+                  <i class="fa fa-trash"></i> Remove
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+          <i class="far fa-heart"></i>
+          <h5>Your favorites list is empty</h5>
+          <p>Add items to your favorites to see them here</p>
+          <a href="{% url 'home' %}" class="btn-shop">
+            <i class="fas fa-shopping-bag"></i> Continue Shopping
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock content %}

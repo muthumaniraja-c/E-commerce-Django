@@ -1,0 +1,407 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+  Shopping Cart | ShopKart
+{% endblock title %}
+
+{% block content %}
+<style>
+/* ========== CART PAGE STYLES ========== */
+.cart-section {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 30px 0;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 25px;
+}
+
+.section-header h4 {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header h4 i {
+  color: #ffcc00;
+}
+
+.section-header hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Cart Card */
+.cart-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Table Styles */
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart-table thead {
+  background: rgba(255, 204, 0, 0.1);
+}
+
+.cart-table th {
+  color: #ffcc00;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cart-table td {
+  padding: 15px;
+  color: #fff;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+.cart-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.cart-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Product Image */
+.product-img {
+  width: 65px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Product Name */
+.product-name {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Price */
+.unit-price {
+  color: #b0b0b0;
+  font-size: 14px;
+}
+
+/* Quantity Badge */
+.qty-badge {
+  background: rgba(255, 204, 0, 0.15);
+  color: #ffcc00;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Amount */
+.item-amount {
+  color: #ffcc00;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* Remove Button */
+.btn-remove {
+  padding: 8px 12px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+  background: #ff6b6b;
+  border-color: #ff6b6b;
+  color: #fff;
+}
+
+/* Table Footer */
+.cart-footer {
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.total-label {
+  color: #b0b0b0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.total-amount {
+  color: #ffcc00;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.checkout-row {
+  padding: 20px;
+  text-align: right;
+}
+
+.btn-checkout {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-checkout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.empty-state i {
+  font-size: 50px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.empty-state h5 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.btn-shop {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-shop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .cart-table thead {
+    display: none;
+  }
+
+  .cart-table tbody {
+    display: block;
+  }
+
+  .cart-table tr {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cart-table td {
+    padding: 0;
+    border: none;
+  }
+
+  .cart-table td:nth-child(1) {
+    flex: 0 0 65px;
+  }
+
+  .cart-table td:nth-child(2) {
+    flex: 1;
+  }
+
+  .cart-table td:nth-child(3),
+  .cart-table td:nth-child(4),
+  .cart-table td:nth-child(5) {
+    flex: 0 0 auto;
+  }
+
+  .cart-table td:nth-child(6) {
+    flex: 0 0 100%;
+    margin-top: 10px;
+  }
+
+  .btn-remove {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .total-row {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+
+  .checkout-row {
+    text-align: center;
+  }
+
+  .btn-checkout {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<section class="cart-section">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h4><i class="fas fa-shopping-cart"></i> Shopping Cart</h4>
+      <hr>
+    </div>
+
+    <!-- Cart Card -->
+    <div class="cart-card">
+      {% if cart %}
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Amount</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart %}
+            <tr>
+              <td>
+                <img src="{{ item.product.product_image.url }}" alt="{{ item.product.name }}" class="product-img">
+              </td>
+              <td>
+                <span class="product-name">{{ item.product.name }}</span>
+              </td>
+              <td>
+                <span class="unit-price">₹{{ item.product.selling_price | stringformat:'d' }}</span>
+              </td>
+              <td>
+                <span class="qty-badge">{{ item.product_qty }}</span>
+              </td>
+              <td>
+                <span class="item-amount amt">₹{{ item.total_cost | stringformat:'d' }}</span>
+              </td>
+              <td>
+                <a href="{% url 'remove_cart' item.id %}" onclick="return confirm('Are you sure you want to remove this item?')" class="btn-remove">
+                  <i class="fa fa-trash"></i> Remove
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <!-- Cart Footer -->
+        <div class="cart-footer">
+          <div class="total-row">
+            <span class="total-label">Total Amount:</span>
+            <span class="total-amount" id="net">₹0</span>
+          </div>
+          <div class="checkout-row">
+            <a href="{% url 'checkout' %}" class="btn-checkout">
+              <i class="fa fa-check-circle"></i> Proceed to Checkout
+            </a>
+          </div>
+        </div>
+      {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+          <i class="fas fa-shopping-cart"></i>
+          <h5>Your cart is empty</h5>
+          <p>Add some products to your cart to see them here</p>
+          <a href="{% url 'home' %}" class="btn-shop">
+            <i class="fas fa-shopping-bag"></i> Continue Shopping
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+
+  <script>
+
+    const amountNodes = document.querySelectorAll('.amt');
+    if (amountNodes.length > 0) {
+      const amounts = Array.from(amountNodes);
+      const total = amounts.reduce((sum, node) => {
+       
+        const numText = node.textContent.replace(/[₹,\s]/g, '');
+        return sum + Number(numText);
+      }, 0);
+      
+      document.getElementById("net").textContent = `₹${total.toLocaleString('en-IN')}`;
+    }
+
+   
+    function handleCheckout() {
+ 
+      alert('Checkout functionality - Please configure your checkout URL');
+      
+    }
+  </script>
+{% endblock content %}

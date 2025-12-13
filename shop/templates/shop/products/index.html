@@ -1,0 +1,362 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+{{ category_name }} | ShopKart
+{% endblock title %}
+
+{% block content %}
+<style>
+/* ========== COLLECTIONS PAGE STYLES ========== */
+.collections-section {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 30px 0;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-header h4 {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header h4 i {
+  color: #ffcc00;
+}
+
+.section-header hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+  margin-bottom: 25px;
+}
+
+.breadcrumb-item a {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.breadcrumb-item a:hover {
+  color: #ffcc00;
+}
+
+.breadcrumb-item.active {
+  color: #ffcc00;
+  font-size: 13px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #666;
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+/* Product Card - ✅ Updated */
+.product-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 204, 0, 0.3);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+}
+
+/* Product Image */
+.product-img {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-img img {
+  transform: scale(1.05);
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  color: #000;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+/* Image Overlay */
+.img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .img-overlay {
+  opacity: 1;
+}
+
+/* View Button */
+.btn-view {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 20px;
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .btn-view {
+  transform: translateY(0);
+}
+
+.btn-view:hover {
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+}
+
+/* Product Info */
+.product-info {
+  padding: 12px;
+}
+
+.product-name {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.product-card:hover .product-name {
+  color: #ffcc00;
+}
+
+/* Price */
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-new {
+  color: #ffcc00;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.price-old {
+  color: #666;
+  font-size: 11px;
+  text-decoration: line-through;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  grid-column: 1 / -1;
+}
+
+.empty-state i {
+  font-size: 50px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.empty-state h5 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.btn-shop {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-shop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 1199px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .product-img {
+    height: 130px;
+  }
+
+  .product-info {
+    padding: 10px;
+  }
+
+  .product-name {
+    font-size: 12px;
+  }
+
+  .price-new {
+    font-size: 13px;
+  }
+
+  /* ✅ Hide View button on mobile */
+  .img-overlay {
+    display: none !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .product-img {
+    height: 110px;
+  }
+}
+</style>
+
+<section class="collections-section">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h4><i class="fas fa-th-large"></i> {{ category_name }} Products</h4>
+      <hr>
+    </div>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active">{{ category_name }} Collections</li>
+      </ol>
+    </nav>
+
+    <!-- Alert Messages -->
+    <div class="alert-container">
+      {% include 'shop/inc/message.html' %}
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+      {% for item in products %}
+      <!-- ✅ Entire card is now clickable -->
+      <a href="{% url 'product_details' category_name item.name %}" class="product-card">
+        <!-- Image -->
+        <div class="product-img">
+          <span class="badge">Sale</span>
+          <img src="{{ item.product_image.url }}" alt="{{ item.name }}">
+          <!-- Overlay with View Button (hidden on mobile) -->
+          <div class="img-overlay">
+            <span class="btn-view">
+              <i class="fas fa-eye"></i> View
+            </span>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="product-info">
+          <p class="product-name">{{ item.name }}</p>
+          <div class="product-price">
+            <span class="price-new">₹{{ item.selling_price | stringformat:'d' }}</span>
+            <span class="price-old">₹{{ item.original_price | stringformat:'d' }}</span>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <h5>No products found</h5>
+        <p>No products available in this category</p>
+        <a href="{% url 'home' %}" class="btn-shop">
+          <i class="fas fa-home"></i> Back to Home
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock content %}

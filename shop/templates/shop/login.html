@@ -1,0 +1,251 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+  Login | ShopKart
+{% endblock title %}
+
+{% block content %}
+<style>
+  .login-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #000000 0%, #434343 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 15px;
+  }
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px 30px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .login-header .brand-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 20px;
+  }
+
+  .login-header h2 {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 5px;
+  }
+
+  .login-header p {
+    color: #b0b0b0;
+    font-size: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+    position: relative;
+  }
+
+  .form-group label {
+    color: #b0b0b0;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .form-group .input-wrapper {
+    position: relative;
+  }
+
+  .form-group .input-wrapper i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    z-index: 10;
+  }
+
+  .form-group input,
+  .form-group .form-control {
+    width: 100%;
+    padding: 10px 15px 10px 38px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  .form-group input::placeholder,
+  .form-group .form-control::placeholder {
+    color: #666 !important;
+  }
+
+  .form-group input:focus,
+  .form-group .form-control:focus {
+    outline: none !important;
+    border-color: #ffcc00 !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.15) !important;
+  }
+
+  .form-group .input-wrapper:focus-within i {
+    color: #ffcc00;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    border: none;
+    border-radius: 8px;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 204, 0, 0.3);
+  }
+
+  .btn-login:active {
+    transform: translateY(-1px);
+  }
+
+  /* Alert Styling */
+  .alert-container .alert {
+    padding: 10px 15px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    margin-bottom: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .alert-container .alert .btn-close {
+    margin-left: auto;
+  }
+
+  .alert-container .alert-success {
+    background-color: #d4edda !important;
+    border: 1px solid #28a745 !important;
+    color: #155724 !important;
+  }
+
+  .alert-container .alert-danger {
+    background-color: #f8d7da !important;
+    border: 1px solid #dc3545 !important;
+    color: #721c24 !important;
+  }
+
+  .alert-container .alert-warning {
+    background-color: #fff3cd !important;
+    border: 1px solid #ffc107 !important;
+    color: #856404 !important;
+  }
+
+  .alert-container .alert-info {
+    background-color: #d1ecf1 !important;
+    border: 1px solid #17a2b8 !important;
+    color: #0c5460 !important;
+  }
+
+  /* Register Link */
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #b0b0b0;
+    font-size: 12px;
+  }
+
+  .register-link a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .register-link a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  /* Responsive */
+  @media (max-width: 576px) {
+    .login-card {
+      padding: 25px 20px;
+    }
+  }
+</style>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="brand-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <h2>Welcome Back!</h2>
+      <p>Login to your ShopKart account</p>
+    </div>
+
+    <!-- Messages -->
+    <div class="alert-container">
+      {% include 'shop/inc/message.html' %}
+    </div>
+
+    <!-- Login Form -->
+    <form method="post" action="">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label>User Name</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          <input type="text" name="username" id="username" placeholder="Enter User Name" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" id="password" placeholder="Enter Password" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <!-- Register Link -->
+    <div class="register-link">
+      Don't have an account? <a href="{% url 'register' %}">Register Now</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}

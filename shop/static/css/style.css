@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap');
+
+html {
+  font-size: 14px;
+}
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+a {
+  text-decoration: none;
+}
+
+.carousel-item img {
+  object-fit: cover;
+  object-position: top;
+  height: 60vh;
+  overflow: hidden;
+}
+
+.old_price {
+  font-weight: bold;
+  color: red;
+}
+
+.new_price {
+  font-weight: bold;
+  background-color: green;
+  color: white;
+  padding: 2px;
+  border-radius: 5px;
+  margin-bottom: 2px;
+}
+
+.pic-box {
+  position: relative;
+}
+
+.hot {
+  background-color: orangered;
+  color: white;
+  width: 50px;
+  text-align: center;
+  font-weight: bold;
+  display: inline;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  z-index: 10;
+}
+
+.pic-box {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 400px;  /* width of image container */
+    height: 400px;     /* height of image container */
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5; /* optional placeholder background */
+}
+
+.pic-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;  /* ensures full image is visible */
+    object-position: center;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .pic-box {
+        height: 300px;
+    }
+}
+@media (max-width: 480px) {
+    .pic-box {
+        height: 200px;
+    }
+}
+
+.navbar {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+}
+.nav-link:hover {
+  color: #ffd700 !important;
+}
+
+
+.custom-notification {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: none;
+  border-radius: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+}
+
+#txtQty {
+  border: 1px solid #ddd;
+}
+
+#txtQty:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.pic-box {
+  position: relative;
+}
+
+.hot {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ff4757;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.brand-marquee {
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.brand-marquee marquee img {
+  height: 60px;
+  margin: 0 25px;
+  transition: transform 0.3s ease;
+}
+
+.brand-marquee marquee img:hover {
+  transform: scale(1.1);
+}
+
+/* Category Section */
+.category-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 8px;
+    width: 160px;       /* 🔹 smaller width */
+    margin: 0 auto;     /* center the cards */
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 🔹 Smaller Image Container */
+.category-image {
+    width: 100%;
+    height: 120px;       /* smaller height */
+    overflow: hidden;
+    border-radius: 6px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-image img {
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image img {
+    transform: scale(1.05);
+}
+
+/* 🔹 Smaller Title */
+.category-card h5 {
+    color: #333;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    transition: color 0.3s ease;
+}
+
+.category-card:hover h5 {
+    color: #007bff;
+}
+
+/* 🔹 Responsive adjustments */
+@media (max-width: 768px) {
+    .category-card {
+        width: 130px;    /* smaller width on mobile */
+    }
+
+    .category-image {
+        height: 100px;
+    }
+
+    .category-card h5 {
+        font-size: 0.8rem;
+    }
+}

@@ -1,0 +1,145 @@
+
+<style>
+/* ========== SMALL HERO SECTION ========== */
+
+.hero-banner {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 25px 0;
+  border-bottom: 2px solid #ffcc00;
+}
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.hero-text h2 {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+}
+
+.hero-text h2 span {
+  color: #ffcc00;
+}
+
+.hero-text p {
+  color: #b0b0b0;
+  font-size: 13px;
+  margin: 0;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-login {
+  padding: 10px 25px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+.btn-register {
+  padding: 10px 25px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-register:hover {
+  border-color: #ffcc00;
+  color: #ffcc00;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 767px) {
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .hero-text h2 {
+    font-size: 18px;
+  }
+
+  .hero-text p {
+    font-size: 12px;
+  }
+
+  .hero-buttons {
+    gap: 10px;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 8px 20px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero-banner {
+    padding: 20px 0;
+  }
+
+  .hero-text h2 {
+    font-size: 16px;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 8px 15px;
+    font-size: 11px;
+  }
+}
+</style>
+
+<!-- ✅ Show ONLY if user is NOT logged in -->
+{% if not user.is_authenticated %}
+<section class="hero-banner">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h2>Our <span>Bestsellers</span></h2>
+        <p>Our most popular products based on sales</p>
+      </div>
+      <div class="hero-buttons">
+        <a href="{% url 'login' %}" class="btn-login">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+        <a href="{% url 'register' %}" class="btn-register">
+          <i class="fas fa-user-plus"></i> Register
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}

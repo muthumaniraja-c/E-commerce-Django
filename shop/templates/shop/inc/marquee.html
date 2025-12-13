@@ -1,0 +1,114 @@
+<style>
+
+.marquee-section {
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  padding: 18px 0;
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  animation: marquee 20s linear infinite;
+  white-space: nowrap;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 60px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.marquee-item i {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 767px) {
+  .marquee-section {
+    padding: 14px 0;
+  }
+
+  .marquee-item {
+    font-size: 14px;
+    margin-right: 40px;
+  }
+
+  .marquee-item i {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .marquee-section {
+    padding: 12px 0;
+  }
+
+  .marquee-item {
+    font-size: 12px;
+    margin-right: 30px;
+  }
+
+  .marquee-item i {
+    font-size: 14px;
+  }
+}
+</style>
+
+<div class="marquee-section">
+  <div class="marquee-content">
+    <div class="marquee-item">
+      <i class="fas fa-truck"></i> Free Shipping on Orders Over ₹500
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-percent"></i> Flat 20% Off on First Order
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-undo"></i> Easy 7-Day Returns
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-lock"></i> 100% Secure Payments
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-headset"></i> 24/7 Customer Support
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-gift"></i> Special Offers Every Week
+    </div>
+    <!-- Duplicate for seamless loop -->
+    <div class="marquee-item">
+      <i class="fas fa-truck"></i> Free Shipping on Orders Over ₹500
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-percent"></i> Flat 20% Off on First Order
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-undo"></i> Easy 7-Day Returns
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-lock"></i> 100% Secure Payments
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-headset"></i> 24/7 Customer Support
+    </div>
+    <div class="marquee-item">
+      <i class="fas fa-gift"></i> Special Offers Every Week
+    </div>
+  </div>
+</div>

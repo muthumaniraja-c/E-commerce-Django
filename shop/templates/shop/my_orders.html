@@ -1,0 +1,466 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}My Orders | ShopKart{% endblock title %}
+
+{% block content %}
+<style>
+/* ========== MY ORDERS PAGE STYLES ========== */
+.orders-section {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  min-height: 100vh;
+  padding: 30px 0;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 25px;
+}
+
+.section-header h4 {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header h4 i {
+  color: #ffcc00;
+}
+
+.section-header hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Order Card */
+.order-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  border-color: rgba(255, 204, 0, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Order Row */
+.order-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Order Item */
+.order-item {
+  flex: 1;
+  min-width: 120px;
+}
+
+.order-item label {
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.order-item p {
+  color: #fff;
+  font-size: 14px;
+  margin: 0;
+}
+
+.order-item .order-number {
+  color: #ffcc00;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.order-item .order-amount {
+  color: #ffcc00;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-delivered {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.status-cancelled {
+  background: rgba(220, 53, 69, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.status-shipped {
+  background: rgba(23, 162, 184, 0.2);
+  color: #17a2b8;
+  border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* View Button */
+.btn-view {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-view:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Delete Button */
+.btn-delete {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+  color: #fff;
+}
+
+/* Action Column */
+.order-action {
+  flex: 0 0 auto;
+  text-align: right;
+  display: flex;
+  gap: 10px;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.empty-state i {
+  font-size: 50px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.empty-state h5 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.btn-shop {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-shop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+  color: #000;
+}
+
+/* Delete Modal */
+.delete-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-modal.active {
+  display: flex;
+}
+
+.delete-modal-content {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.delete-modal-content i {
+  font-size: 50px;
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.delete-modal-content h5 {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.delete-modal-content p {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-cancel {
+  padding: 10px 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-confirm-delete {
+  padding: 10px 25px;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-confirm-delete:hover {
+  box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .order-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .order-item:last-of-type {
+    border-bottom: none;
+  }
+
+  .order-item label {
+    margin-bottom: 0;
+  }
+
+  .order-action {
+    width: 100%;
+    justify-content: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-view, .btn-delete {
+    flex: 1;
+    justify-content: center;
+  }
+}
+</style>
+
+<section class="orders-section">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <h4><i class="fas fa-box"></i> My Orders</h4>
+      <hr>
+    </div>
+
+    {% if orders %}
+      {% for order in orders %}
+      <div class="order-card" id="order-{{ order.id }}">
+        <div class="order-row">
+          <!-- Order Number -->
+          <div class="order-item">
+            <label>Order Number</label>
+            <p class="order-number">#{{ order.order_number }}</p>
+          </div>
+
+          <!-- Date -->
+          <div class="order-item">
+            <label>Date</label>
+            <p>{{ order.created_at|date:"d M, Y" }}</p>
+          </div>
+
+          <!-- Amount -->
+          <div class="order-item">
+            <label>Total Amount</label>
+            <p class="order-amount">₹{{ order.total_amount|stringformat:'d' }}</p>
+          </div>
+
+          <!-- Payment -->
+          <div class="order-item">
+            <label>Payment</label>
+            <p>{{ order.payment_mode }}</p>
+          </div>
+
+          <!-- Status -->
+          <div class="order-item">
+            <label>Status</label>
+            {% if order.status == 'Delivered' %}
+              <span class="status-badge status-delivered">{{ order.status }}</span>
+            {% elif order.status == 'Cancelled' %}
+              <span class="status-badge status-cancelled">{{ order.status }}</span>
+            {% elif order.status == 'Shipped' %}
+              <span class="status-badge status-shipped">{{ order.status }}</span>
+            {% else %}
+              <span class="status-badge status-pending">{{ order.status }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="order-action">
+            <a href="{% url 'order_detail' order.id %}" class="btn-view">
+              <i class="fas fa-eye"></i> View
+            </a>
+            <button class="btn-delete" onclick="showDeleteModal({{ order.id }}, '{{ order.order_number }}')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <h5>No orders yet</h5>
+        <p>Start shopping to see your orders here</p>
+        <a href="{% url 'home' %}" class="btn-shop">
+          <i class="fas fa-shopping-bag"></i> Start Shopping
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="delete-modal" id="deleteModal">
+  <div class="delete-modal-content">
+    <i class="fas fa-exclamation-triangle"></i>
+    <h5>Delete Order</h5>
+    <p>Are you sure you want to delete order <strong id="orderNumberText"></strong>? This action cannot be undone.</p>
+    <div class="delete-modal-buttons">
+      <button class="btn-cancel" onclick="hideDeleteModal()">Cancel</button>
+      <form id="deleteForm" method="POST" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn-confirm-delete">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentOrderId = null;
+
+  function showDeleteModal(orderId, orderNumber) {
+    currentOrderId = orderId;
+    document.getElementById('orderNumberText').textContent = '#' + orderNumber;
+    document.getElementById('deleteForm').action = '/delete-order/' + orderId + '/';
+    document.getElementById('deleteModal').classList.add('active');
+  }
+
+  function hideDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+    currentOrderId = null;
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      hideDeleteModal();
+    }
+  });
+</script>
+{% endblock content %}
